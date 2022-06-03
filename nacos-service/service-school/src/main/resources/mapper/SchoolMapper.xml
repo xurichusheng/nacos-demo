@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjh.mapper.ISchoolMapper">
+    <resultMap id="baseResultMap" type="com.wjh.school.entity.SchoolEntity">
+        <id column="id" property="id" jdbcType="NUMERIC" />
+        <result column="school_guid" property="schoolGuid" jdbcType="VARCHAR" />
+        <result column="school_code" property="schoolCode" jdbcType="VARCHAR" />
+        <result column="school_name" property="schoolName" jdbcType="VARCHAR" />
+        <result column="short_name" property="shortName" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="NUMERIC" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="creater_id" property="createrId" jdbcType="VARCHAR" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="updater_id" property="updaterId" jdbcType="VARCHAR" />
+        <result column="updater" property="updater" jdbcType="VARCHAR" />
+        <result column="bak" property="bak" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="base_column_list">
+        id, school_guid, school_code, school_name, short_name, address,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+    </sql>
+
+    <insert id="save" parameterType="com.wjh.school.entity.SchoolEntity" keyProperty="id" useGeneratedKeys="true">
+        insert into t_school
+        (
+        school_guid, school_code, school_name, short_name, address,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+        )
+        values
+        (
+        #{schoolGuid}, #{schoolCode}, #{schoolName}, #{shortName}, #{address},
+        1, now(), #{createrId}, #{creater}, now(), #{updaterId}, #{updater}, #{bak}
+        )
+    </insert>
+
+    <insert id="batchSave" parameterType="java.util.List">
+        insert into t_school
+        (
+        school_guid, school_code, school_name, short_name, address,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.schoolGuid}, #{item.schoolCode}, #{item.schoolName}, #{item.shortName}, #{item.address},
+            1, now(), #{item.createrId}, #{item.creater}, now(), #{item.updaterId}, #{item.updater}, #{item.bak}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.wjh.school.entity.SchoolEntity">
+        update t_school
+        <set>
+            <if test="schoolName != null and schoolName != ''">
+                school_name = #{schoolName},
+            </if>
+            <if test="shortName != null and shortName != ''">
+                short_name = #{shortName},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            update_time = now()
+        </set>
+        where school_guid = #{schoolGuid}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from t_school where school_guid = #{schoolGuid,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="detail" parameterType="java.lang.String" resultMap="baseResultMap">
+        select <include refid="base_column_list"/> from t_school
+        where school_guid = #{schoolGuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAll" resultMap="baseResultMap">
+        select <include refid="base_column_list"/> from t_school
+    </select>
+
+    <select id="count" parameterType="com.wjh.stu.request.StudentPageRequest" resultType="java.lang.Integer">
+        select count(id) from t_school
+        where 1 = 1
+        <if test="schoolCode != null and schoolCode != ''">
+            and school_code like CONCAT('%', #{schoolCode}, '%')
+        </if>
+        <if test="schoolName != null and schoolName != ''">
+            and school_name like CONCAT('%', #{schoolName}, '%')
+        </if>
+        <if test="shortName != null and shortName != ''">
+            and short_name like CONCAT('%', #{shortName}, '%')
+        </if>
+        <if test="address != null and address != ''">
+            and address like CONCAT('%', #{address}, '%')
+        </if>
+        <if test="beginDate != null and beginDate != ''">
+            <![CDATA[ and create_time >= #{beginDate} ]]>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            <![CDATA[ create_time <= #{endDate} ]]>
+        </if>
+    </select>
+
+    <select id="page" resultMap="baseResultMap">
+        select <include refid="base_column_list"/>
+        from t_school
+        where 1 = 1
+        <if test="req.schoolCode != null and req.schoolCode != ''">
+            and school_code like CONCAT('%', #{req.schoolCode}, '%')
+        </if>
+        <if test="req.schoolName != null and req.schoolName != ''">
+            and school_name like CONCAT('%', #{req.schoolName}, '%')
+        </if>
+        <if test="req.shortName != null and req.shortName != ''">
+            and short_name like CONCAT('%', #{req.shortName}, '%')
+        </if>
+        <if test="req.address != null and req.address != ''">
+            and address like CONCAT('%', #{req.address}, '%')
+        </if>
+        <if test="req.beginDate != null and req.beginDate != ''">
+            <![CDATA[ and create_time >= #{req.beginDate} ]]>
+        </if>
+        <if test="req.endDate != null and req.endDate != ''">
+            <![CDATA[ create_time <= #{req.endDate} ]]>
+        </if>
+        order by id desc, create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+</mapper>

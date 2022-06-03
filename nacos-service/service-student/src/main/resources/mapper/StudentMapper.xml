@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjh.mapper.IStudentMapper">
+    <resultMap id="baseResultMap" type="com.wjh.stu.entity.StudentEntity">
+        <id column="id" property="id" jdbcType="NUMERIC" />
+        <result column="student_guid" property="studentGuid" jdbcType="VARCHAR" />
+        <result column="school_guid" property="schoolGuid" jdbcType="VARCHAR" />
+        <result column="student_code" property="studentCode" jdbcType="VARCHAR" />
+        <result column="student_name" property="studentName" jdbcType="VARCHAR" />
+        <result column="gender" property="gender" jdbcType="NUMERIC" />
+        <result column="age" property="age" jdbcType="NUMERIC" />
+        <result column="state" property="state" jdbcType="NUMERIC" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="creater_id" property="createrId" jdbcType="VARCHAR" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="updater_id" property="updaterId" jdbcType="VARCHAR" />
+        <result column="updater" property="updater" jdbcType="VARCHAR" />
+        <result column="bak" property="bak" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="base_column_list">
+        id, student_guid, school_guid, student_code, student_name, gender, age,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+    </sql>
+    
+    <insert id="save" parameterType="com.wjh.stu.entity.StudentEntity" keyProperty="id" useGeneratedKeys="true">
+        insert into t_student
+        (
+        student_guid, school_guid, student_code, student_name, gender, age,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+        )
+        values
+        (
+        #{studentGuid}, #{schoolGuid}, #{studentCode}, #{studentName}, #{gender}, #{age},
+        1, now(), #{createrId}, #{creater}, now(), #{updaterId}, #{updater}, #{bak}
+        )
+    </insert>
+
+    <insert id="batchSave" parameterType="java.util.List">
+        insert into t_student
+        (
+        student_guid, school_guid, student_code, student_name, gender, age,
+        state, create_time, creater_id, creater, update_time, updater_id, updater, bak
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.studentGuid}, #{item.schoolGuid}, #{item.studentCode}, #{item.studentName}, #{item.gender}, #{item.age},
+            1, now(), #{item.createrId}, #{item.creater}, now(), #{item.updaterId}, #{item.updater}, #{item.bak}
+            )
+        </foreach>
+    </insert>
+    
+    <update id="update" parameterType="com.wjh.stu.entity.StudentEntity">
+        update t_student
+        <set>
+            <if test="schoolGuid != null and schoolGuid != ''">
+                school_guid = #{schoolGuid},
+            </if>
+            <if test="studentName != null and studentName != ''">
+                student_name = #{studentName},
+            </if>
+            <if test="gender != null and gender != 0">
+                gender = #{gender},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            update_time = now()
+        </set>
+        where student_guid = #{studentGuid}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        delete from t_student where student_guid = #{studentGuid,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="detail" parameterType="java.lang.String" resultMap="baseResultMap">
+        select <include refid="base_column_list"/> from t_student
+        where student_guid = #{studentGuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAll" resultMap="baseResultMap">
+        select <include refid="base_column_list"/> from t_student
+    </select>
+
+    <select id="count" parameterType="com.wjh.stu.request.StudentPageRequest" resultType="java.lang.Integer">
+        select count(id) from t_student
+        where 1 = 1
+        <if test="schoolGuid != null and schoolGuid != ''">
+            and school_guid = #{schoolGuid}
+        </if>
+        <if test="studentCode != null and studentCode != ''">
+            and student_code like CONCAT('%', #{studentCode}, '%')
+        </if>
+        <if test="studentName != null and studentName != ''">
+            and student_name like CONCAT('%', #{studentName}, '%')
+        </if>
+        <if test="gender != null and gender != 0">
+            and gender = #{gender}
+        </if>
+        <if test="beginDate != null and beginDate != ''">
+            <![CDATA[ and create_time >= #{beginDate} ]]>
+        </if>
+        <if test="endDate != null and endDate != ''">
+            <![CDATA[ create_time <= #{endDate} ]]>
+        </if>
+    </select>
+
+    <select id="page" resultMap="baseResultMap">
+        select <include refid="base_column_list"/>
+          from t_student
+         where 1 = 1
+        <if test="req.hoolGuid != null and req.schoolGuid != ''">
+            and school_guid = #{req.schoolGuid}
+        </if>
+        <if test="req.studentCode != null and req.studentCode != ''">
+            and student_code like CONCAT('%', #{req.studentCode}, '%')
+        </if>
+        <if test="req.studentName != null and req.studentName != ''">
+            and student_name like CONCAT('%', #{req.studentName}, '%')
+        </if>
+        <if test="req.gender != null and req.gender != 0">
+            and gender = #{req.gender}
+        </if>
+        <if test="req.beginDate != null and req.beginDate != ''">
+            <![CDATA[ and create_time >= #{req.beginDate} ]]>
+        </if>
+        <if test="req.endDate != null and req.endDate != ''">
+            <![CDATA[ create_time <= #{req.endDate} ]]>
+        </if>
+        order by id desc, create_time desc
+        limit #{offset}, #{pageSize}
+    </select>
+
+    <select id="queryByMap" parameterType="java.util.Map" resultMap="baseResultMap">
+        select <include refid="base_column_list"/>
+          from t_student
+         where 1 = 1
+        <if test="params.shoolGuid != null and params.shoolGuid != ''">
+            and school_guid = #{params.shoolGuid}
+        </if>
+        <if test="params.studentCode != null and params.studentCode != ''">
+            and student_code like CONCAT('%', #{params.studentCode}, '%')
+        </if>
+        <if test="params.studentName != null and params.studentName != ''">
+            and student_name like CONCAT('%', #{params.studentName}, '%')
+        </if>
+        <if test="params.gender != null and params.gender != 0">
+            and gender = #{params.gender}
+        </if>
+        <if test="params.beginDate != null and params.beginDate != ''">
+            <![CDATA[ and create_time >= #{params.beginDate} ]]>
+        </if>
+        <if test="params.endDate != null and params.endDate != ''">
+            <![CDATA[ create_time <= #{endDate} ]]>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+		<substitutionProperty name="log.proj" value="service-student"/>
+		<substitutionProperty name="log.base" value="../logs/${log.proj}" />
+		<substitutionProperty name="max.size" value="200MB" />
+		<jmxConfigurator />
+		<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+	        <layout class="ch.qos.logback.classic.PatternLayout">
+	            <pattern>%date [%thread] [%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] %-5level %logger{80}:%line - %msg%n</pattern>
+	        </layout>
+	    </appender>
+	
+	    <appender name="file.debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	        <File>${log.base}/${log.proj}.log</File>
+	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	            <FileNamePattern>${log.base}/${log.proj}_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+	            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	                 <maxFileSize>${max.size}</maxFileSize>
+	            </timeBasedFileNamingAndTriggeringPolicy>
+	        </rollingPolicy>
+	        <layout class="ch.qos.logback.classic.PatternLayout">
+	            <pattern>%date [%thread] [%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] %-5level %logger{80}:%line - %msg%n</pattern>
+	        </layout>
+	    </appender>
+	    
+	    <appender name="file.error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	        <File>${log.base}/${log.proj}_error.log</File>
+	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	            <FileNamePattern>${log.base}/${log.proj}_error_%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+	            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	                 <maxFileSize>${max.size}</maxFileSize>
+	            </timeBasedFileNamingAndTriggeringPolicy>
+	        </rollingPolicy>
+	        <layout class="ch.qos.logback.classic.PatternLayout">
+	            <pattern>%date [%thread] [%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] %-5level %logger{80}:%line - %msg%n</pattern>
+	        </layout>
+	        <filter class="ch.qos.logback.classic.filter.ThresholdFilter"><!-- 临界值过滤器,过滤掉低于指定临界值的日志 -->
+				<level>ERROR</level>
+			</filter>
+	    </appender>
+
+	    <logger name="org.springframework">
+			<level value="warn"/>
+		</logger>
+		<logger name="com.netflix">
+			<level value="warn"/>
+		</logger>
+	    <logger name="com.netflix.discovery">
+			<level value="warn"/>
+		</logger>
+		<logger name="com.netflix.loadbalancer">
+			<level value="warn"/>
+		</logger>
+	    <logger name="org.apache.http">
+			<level value="warn" />
+		</logger>
+		<logger name="org.hibernate">
+			<level value="warn" />
+		</logger>
+		<logger name="org.mybatis">
+			<level value="warn" />
+		</logger>
+		<logger name="org.apache.ibatis">
+			<level value="warn" />
+		</logger>
+		<logger name="ch.qos.logback">
+			<level value="warn" />
+		</logger>
+		<root level="debug">
+			<appender-ref ref="stdout" />
+	        <appender-ref ref="file.debug" />
+	        <appender-ref ref="file.error" />
+		</root>
+</configuration>

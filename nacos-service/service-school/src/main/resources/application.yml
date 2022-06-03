@@ -1,0 +1,44 @@
+server:
+  port: 8002
+  servlet:
+    context-path: /
+spring:
+  application:
+    name: service-school
+  profiles:
+    active: dev  # 环境设置：dev、test、prod
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+      username: root
+      password: root
+      initial-size: 8
+      max-active: 16
+      min-idle: 8
+      max-wait: 60000
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+  #  jackson:
+  #    date-format: yyyy-MM-dd HH:mm:ss
+  #    time-zone: GMT+8
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.wjh.stu.entity,com.wjh.school.entity,com.wjh.tea.entity
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名法
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.wjh.mapper: debug
+
