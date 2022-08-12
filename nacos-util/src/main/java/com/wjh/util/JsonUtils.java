@@ -3,12 +3,12 @@ package com.wjh.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.fastjson.parser.Feature;
 import org.apache.commons.lang3.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
@@ -120,7 +120,8 @@ public final class JsonUtils {
 				// SerializerFeature.WriteNullNumberAsZero, // 数值字段如果为null,输出为0,而非null
 				// SerializerFeature.DisableCircularReferenceDetect, // 消除对同一对象循环引用的问题
 				SerializerFeature.WriteNullListAsEmpty, // List字段如果为null,输出为[],而非null
-				SerializerFeature.WriteDateUseDateFormat // 自定义时间格式
+				SerializerFeature.WriteDateUseDateFormat, // 自定义时间格式
+				SerializerFeature.DisableCircularReferenceDetect // 消除循环引用
 		);
 	}
 }

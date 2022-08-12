@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-public class ResultVO<T> implements Serializable {
+public class ResultVO implements Serializable {
 
 	private static final long serialVersionUID = 6354067728335497648L;
 
@@ -30,5 +30,5 @@ public class ResultVO<T> implements Serializable {
 	/** 消息提示 */
 	private String msg;
 	/** 数据 */
-	private T data;
+	private Object data;
 }

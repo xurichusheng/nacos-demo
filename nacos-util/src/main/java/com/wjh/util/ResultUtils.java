@@ -10,8 +10,8 @@ import com.wjh.enums.ResultCodeEnums;
  */
 public class ResultUtils {
 
-    public static <T> ResultVO<T> success(T data){
-        ResultVO<T> resultVO = new ResultVO<>();
+    public static ResultVO success(Object data){
+        ResultVO resultVO = new ResultVO();
         resultVO.setCode(ResultCodeEnums.SUCCESS.getCode());
         resultVO.setData(data);
         resultVO.setMsg(ResultCodeEnums.SUCCESS.getMessage());
@@ -22,7 +22,7 @@ public class ResultUtils {
      * 返回成功
      * @return
      */
-    public static <T> ResultVO<T> success() {
+    public static ResultVO success() {
         return success(null);
     }
 
@@ -32,8 +32,8 @@ public class ResultUtils {
      * @param message
      * @return
      */
-    public static <T> ResultVO<T> error(Integer code , String message) {
-        ResultVO<T> resultVO = new ResultVO<>();
+    public static ResultVO error(Integer code , String message) {
+        ResultVO resultVO = new ResultVO();
         resultVO.setMsg(message);
         resultVO.setCode(code);
         return resultVO;
@@ -45,8 +45,8 @@ public class ResultUtils {
      * @param message
      * @return
      */
-    public static <T> ResultVO<T> error(ResultCodeEnums resultCodeEnums , String message) {
-        ResultVO<T> resultVO = new ResultVO<>();
+    public static ResultVO error(ResultCodeEnums resultCodeEnums , String message) {
+        ResultVO resultVO = new ResultVO();
         resultVO.setMsg(message);
         resultVO.setCode(resultCodeEnums.getCode());
         return resultVO;
@@ -57,8 +57,8 @@ public class ResultUtils {
      * @param resultCodeEnums
      * @return
      */
-    public static <T> ResultVO<T> error(ResultCodeEnums resultCodeEnums) {
-        ResultVO<T> resultVO = new ResultVO<>();
+    public static ResultVO error(ResultCodeEnums resultCodeEnums) {
+        ResultVO resultVO = new ResultVO();
         resultVO.setMsg(resultCodeEnums.getMessage());
         resultVO.setCode(resultCodeEnums.getCode());
         return resultVO;
@@ -70,8 +70,8 @@ public class ResultUtils {
      * @param msg
      * @return
      */
-    public static <T> ResultVO<T> retMsg(Integer code, String msg){
-        ResultVO<T> resultVO = new ResultVO<>();
+    public static ResultVO retMsg(Integer code, String msg){
+        ResultVO resultVO = new ResultVO();
         resultVO.setMsg(msg);
         resultVO.setCode(code);
         return resultVO;

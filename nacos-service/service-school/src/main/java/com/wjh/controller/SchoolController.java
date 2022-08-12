@@ -1,7 +1,5 @@
 package com.wjh.controller;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +17,6 @@ import com.wjh.enums.ResultCodeEnums;
 import com.wjh.school.entity.SchoolEntity;
 import com.wjh.school.request.SaveSchoolRequest;
 import com.wjh.service.ISchoolService;
-import com.wjh.stu.entity.StudentEntity;
 import com.wjh.util.JsonUtils;
 import com.wjh.util.ResultUtils;
 
@@ -43,7 +40,7 @@ public class SchoolController {
     private IStudentClient studentClient;
 
     @PostMapping("/save")
-    public ResultVO<?> save(@Validated @RequestBody SaveSchoolRequest request) {
+    public ResultVO save(@Validated @RequestBody SaveSchoolRequest request) {
         log.info("保存学校信息-开始，请求参数:{}", JSON.toJSONString(request));
         SchoolEntity sch = JsonUtils.parse(JsonUtils.toJSONBytes(request), SchoolEntity.class);
         schoolService.save(sch);
@@ -51,12 +48,12 @@ public class SchoolController {
     }
 
     @GetMapping("/students/{schoolGuid}")
-    public ResultVO<List<StudentEntity>> queryStudents(@PathVariable String schoolGuid) {
+    public ResultVO queryStudents(@PathVariable String schoolGuid) {
         log.info("查询学生信息-开始，学校Guid:{}", schoolGuid);
         if (StringUtils.isBlank(schoolGuid)) {
             return ResultUtils.error(ResultCodeEnums.ERROR.getCode(), "请选择学校");
         }
-        ResultVO<List<StudentEntity>> result = studentClient.queryBySchool(schoolGuid);
+        ResultVO result = studentClient.queryBySchool(schoolGuid);
 
         if (result == null || !ResultCodeEnums.SUCCESS.getCode().equals(result.getCode())) {
             log.error("查询学生信息-失败！学校Guid:{}, 结果:{}", schoolGuid, JSON.toJSONString(result));
